@@ -1,5 +1,10 @@
 var assert = require('assert');
 var authController = require('../../controllers/auth.controller');
+let expect = require('chai').expect;
+let chai = require('chai');
+let chaiAsPromised = require('chai-as-promised');
+chai.use(chaiAsPromised);
+chai.should();
 
 describe('AuthController', function () {
   beforeEach(function () {
@@ -7,7 +12,9 @@ describe('AuthController', function () {
   });
   describe('isAuthorized', function () {
     it('Should return false if not authorized', function () {
-      assert.equal(false, authController.isAuthorized('admin'));
+      let isAuth = authController.isAuthorized('admin');
+      assert.equal(false, isAuth);
+      isAuth.should.be.false;
     });
     it('Should return true if authorized', function () {
       assert.equal(true, authController.isAuthorized('user'));
@@ -23,6 +30,13 @@ describe('AuthController', function () {
         assert.equal(false, isAuth);
         done();
       });
+    });
+  });
+
+  describe('isAuthorizedPromise', function () {
+    it('Should return false if not authorized', function () {
+      this.timeout(2500);
+      return authController.isAuthorizedPromise('admin').should.eventually.be.false;
     });
   })
 });
