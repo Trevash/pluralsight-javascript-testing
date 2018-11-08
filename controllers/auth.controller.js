@@ -1,6 +1,14 @@
 let roles;
+let user;
+
+exports.setUser = function(inUser) {
+  user = inUser;
+};
 
 exports.isAuthorized = function(neededRole) {
+  if (user) {
+    return user.isAuthorized(neededRole);
+  }
   return roles.indexOf(neededRole) >= 0;
 };
 
@@ -16,9 +24,16 @@ exports.isAuthorizedPromise = function (neededRole) {
       resolve(roles.indexOf(neededRole) >= 0)
     }, 2100);
   })
+};
 
+exports.getIndex = function (req, res) {
+  if (req.user.isAuthorized('admin')) {
+    return res.render('index');
+  }
+  res.render('error');
 };
 
 exports.setRoles = function (role) {
   roles = role;
+  user.roles = role;
 };
